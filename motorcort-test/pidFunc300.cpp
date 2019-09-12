@@ -30,7 +30,7 @@ double pidFunc300::calcPID(double input, int count, float ticksPerDeg)
 		return throttle;
 		
 	}
-	return 0.0;
+	return throttle;
 }
 
 

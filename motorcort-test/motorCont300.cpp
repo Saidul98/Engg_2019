@@ -37,7 +37,15 @@ bool motorCont300::move(int flr)
 	switch(state)
 	{
 		case 0: //pid calc
+			pidC();
+			if( tFCalc.getError() > maxStop || tFCalc.getError() < minStop)
+			{
 			drive();
+			}
+			else
+			{
+				throttle = 1500;
+			}
 			break;
 		case 1: //home
 			home();
