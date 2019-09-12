@@ -1,0 +1,6 @@
+//Changes for motor control code
+set random print lines everywhere and run it like a log based system.
+copy paste and count the things - print values per calculations
+
+change max speed so it wont runn full speed to 1420
+it will take 10s to hit 1420
