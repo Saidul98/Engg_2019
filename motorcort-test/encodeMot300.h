@@ -24,8 +24,8 @@ class encodeMot300{
 	int getB();
 	void incCount();
 	void decCount();
-	/*void doEncoderA();
-	void doEncoderB();*/
+	void goA();
+	void goB();
 	
 };
 

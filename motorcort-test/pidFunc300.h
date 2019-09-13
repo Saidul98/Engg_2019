@@ -16,6 +16,7 @@ bool milli;
 double sampleRate; //in ms
 double error; //Current error
 double pError; 
+double pthrottle;
 	
 	
 	public:
@@ -25,6 +26,7 @@ double pError;
 	//methods
 	void setSampleRm(int x);
 	void setSampleRu(double y);
+	void errorCalc(double input, int count, float ticksPerDeg);
 	double getError();
 	void sampleSel();
 	double calcPID(double input, int count, float ticksPerDeg);

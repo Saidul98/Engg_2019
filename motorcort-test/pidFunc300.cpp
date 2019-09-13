@@ -16,9 +16,15 @@ pidFunc300::pidFunc300(double p, double d, double i){
 pidFunc300::pidFunc300(){
 
 }
-double pidFunc300::calcPID(double input, int count, float ticksPerDeg)
+void pidFunc300::errorCalc(double input, int count, float ticksPerDeg)
 {
 	error = input - (count * ticksPerDeg);
+	return;
+}
+
+double pidFunc300::calcPID(double input, int count, float ticksPerDeg)
+{
+	errorCalc(input, count, ticksPerDeg);
 	sampleSel(); //updates currentSample
 	if (currentSample - lastSample > sampleRate)
 	{
@@ -27,10 +33,11 @@ double pidFunc300::calcPID(double input, int count, float ticksPerDeg)
 		pError = error;
 		double throttle = (kp * error) + (kd * deriv) + (ki * integ);
 		lastSample = currentSample;
+		pthrottle = throttle;
 		return throttle;
 		
 	}
-	return throttle;
+	return pthrottle;
 }
 
 
@@ -41,21 +48,29 @@ double pidFunc300::getError()
 }
 
 void pidFunc300::sampleSel(){
-	if(milli == true)
+	if(milli == true){
 		currentSample = millis();
+	}
+	
 	else
+	{
 		currentSample = micros();
+	}
+	
+	return;
 	}
 
 void pidFunc300::setSampleRm(int x)
 {
 	milli = true;
 	sampleRate = x;
+	return;
 }
 void pidFunc300::setSampleRu(double y)
 {
 	milli = false;
 	sampleRate = y;
+	return;
 }
 
 

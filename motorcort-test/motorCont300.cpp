@@ -9,18 +9,18 @@
  */
 motorCont300::motorCont300(){
 	pin = 12;
-	pinMode(pin, OUTPUT);
-	motor1.attach(pin, 1000, 2000);
+	//pinMode(pin, OUTPUT);
+	//motor1.attach(pin, 1000, 2000);
 	throttle = 1500;
-	motor1.writeMicroseconds(throttle);
+	//motor1.writeMicroseconds(throttle);
 	state = 1;
-	//angle = 1000;
+	angle = 0;
 	
 	
 	//////////////////////////////////////////////////////////////////////	Optional - Can be set by user	//
 	encoder1 = encodeMot300(2, 3, 537.6); //	(intrupt pins, ppr)
 	tFCalc = pidFunc300(4.40, 0.05, 2.5); //	(kp, kd, ki)
-	setPulley(70); //Set Pulley Circumfrence in mm
+	setPulley(0.070); //Set Pulley Circumfrence in mm
 	setStopRange((-5.0), 5.0); //set error bars for position control
 	
 	
@@ -34,17 +34,25 @@ bool motorCont300::move(int flr)
 	
 	angle = flr * degPerF;
 	motor1.writeMicroseconds(throttle);
+	//motor1.write(throttle);
+	Serial.print("reading     ");
+	Serial.println(motor1.read());
 	switch(state)
 	{
 		case 0: //pid calc
-			pidC();
-			if( tFCalc.getError() > maxStop || tFCalc.getError() < minStop)
+			//Serial.println("hello");
+			tFCalc.errorCalc(angle, encoder1.getCount(), encoder1.getTicks());
+			//Serial.println(tFCalc.getError());
+			if( tFCalc.getError() < maxStop && tFCalc.getError() > minStop)
 			{
-			drive();
+			state = 2;
+
+			Serial.println("stop");
 			}
 			else
 			{
-				throttle = 1500;
+				drive();
+				
 			}
 			break;
 		case 1: //home
@@ -52,6 +60,7 @@ bool motorCont300::move(int flr)
 			break;
 		case 2: //halt
 			halt();
+			Serial.println("halting");
 			break;
 		default: //Do Nothing
 		
@@ -64,10 +73,11 @@ bool motorCont300::move(int flr)
 void motorCont300::setState(int a)
 {
 	state = a;
+	return;
 }
 
 void motorCont300::home(){
-	
+	return;
 }
 
 void  motorCont300::halt()
@@ -75,16 +85,15 @@ void  motorCont300::halt()
 	minPower = 1500;
 	maxPower = 1500;
 	throttle = 1500;
+	return;
+	
 }
 
 void motorCont300::drive()
 {
 	pidC(); //Do Math on throttle from PID
 	mapThrottle();// Set the direction of the motor and map the throttle to be within the min and max.
-	if(tFCalc.getError() > maxStop || tFCalc.getError() < minStop)
-	{
-		state = 2;
-	}
+	return;
 }
 
 void motorCont300::mapThrottle()
@@ -98,11 +107,13 @@ void motorCont300::mapThrottle()
         setDir('+');
       }
         throttle = map(abs(throttle), 235, 67007, minPower, maxPower);
+		return;
 }
 
 void  motorCont300::pidC()
 {
 	throttle = tFCalc.calcPID(angle, encoder1.getCount(), encoder1.getTicks());
+	return;
 }
 
 void motorCont300::setDir(char dir)
@@ -121,18 +132,20 @@ void motorCont300::setDir(char dir)
   minPower = 1500;
   maxPower = 1500;
   }
- 
+ return;
 }
 
 void motorCont300::setPulley(double p)
 {
-	double cir = p * PI;
+	double cir = p * 2 * PI;
 	double r1 = 360 * 0.295;
 	degPerF = r1 / cir;
+	return;
 }
 
 void motorCont300::setStopRange(double mi, double ma)
 {
 	minStop = mi;
 	maxStop = ma;
+	return;
 }

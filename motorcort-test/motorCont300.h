@@ -25,7 +25,7 @@ class motorCont300{
 	
 	pidFunc300 tFCalc;
 	
-	Servo motor1;
+
 	
 	 
 	  
@@ -33,6 +33,7 @@ class motorCont300{
 	
 	
 	public:
+	Servo motor1;	
 	double angle;
 	double throttle;
 	encodeMot300 encoder1;

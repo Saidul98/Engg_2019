@@ -61,7 +61,7 @@ unsigned long previousMillis = 0;
 const long interval2 = 10000;
 unsigned long previousMillis2 = 0;
 
-int flor = -6;
+int flor = 0;
 
 void loop() 
 {
@@ -73,10 +73,6 @@ void loop()
   }
   Serial.println("Hey");
    unsigned long currentMillis2 = millis();
-   if(currentMillis2 - previousMillis2 >= interval2)
-      {
-        flor =30;
-      }
     
 }
 
@@ -123,6 +119,8 @@ void controller(double input) {
     //Motor0.writeMicroseconds(throttle);
   }
   Motor0.writeMicroseconds(throttle);
+  Serial.print("reading     ");
+  Serial.println(Motor0.read());
 }
 
 void doEncoderA() { //SETUPS the interrupts of the encoder
