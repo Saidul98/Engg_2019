@@ -1,5 +1,5 @@
 /* L07_C10 PATH PLANNING
-Returns "moveFloors", in order of first pressed, and will visit any requested floors inbetween destination and current position. will go to any others pressed within that time that are along the route, as long as those are pressed before the elevator starts moving (don't send our command until doors have closed to allow multiple presses) but could construct a more intelligent course after next arrival. Currently, it cannot visit a newly requested floor while already underway.
+  Returns "moveFloors", in order of first pressed, and will visit any requested floors inbetween destination and current position. will go to any others pressed within that time that are along the route, as long as those are pressed before the elevator starts moving (don't send our command until doors have closed to allow multiple presses) but could construct a more intelligent course after next arrival. Currently, it cannot visit a newly requested floor while already underway.
 */
 #include <Servo.h>
 
@@ -45,15 +45,15 @@ double temp = throttle;
 int flor = 0;
 /*
 
-NOTES FOR FINAL CODE:
-- Confirm operation of "floorState" true/false sequence
-- Re-set "floorState" to 2 afer EmergencyReturn and NormalRequest
-- Confirm output variable name "moveFloors" with C30
-- Confirm name "floorState" with C30
-- Make array work with more values than in the set size of array
+  NOTES FOR FINAL CODE:
+  - Confirm operation of "floorState" true/false sequence
+  - Re-set "floorState" to 2 afer EmergencyReturn and NormalRequest
+  - Confirm output variable name "moveFloors" with C30
+  - Confirm name "floorState" with C30
+  - Make array work with more values than in the set size of array
 
 */
-int input_array[] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+int input_array[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 int input_num = 0;
 int arraySize = 30;
 
@@ -64,7 +64,7 @@ int binArray[4];       //Array with states of which floors to go to - should thi
 int moveFloors;        //Final output variable to send to C30
 
 
-//Other variables 
+//Other variables
 int direc = 1;  //Direction of movement --> either up (1) or down (-1)
 int y;
 int moveTest;
@@ -89,8 +89,8 @@ int floorState = 1; //should be false to begin with - CHANGE TO FALSE ONCE DONE 
 
 void setup() {
 
-//INITIALISE SERIAL
-Serial.begin(9600);
+  //INITIALISE SERIAL
+  Serial.begin(9600);
 
   Motor0.attach(Motor_pin0, 1000, 2000); // This pin is the control signal for the Motor
   Motor0.writeMicroseconds(1500); //intit the motor to stop
@@ -100,31 +100,31 @@ Serial.begin(9600);
   attachInterrupt(1, doEncoderB, CHANGE); //encoder ON PIN 3
 
 
-/*assignButtons();
-Serial.println("randomly pressed lift buttons:");  //ASSIGN VIRTUAL BUTTONS - simulating C20
-for (int t = 0; t < numb; t = t + 1){
-  int r = random(1,6);
-  largeArray[t] = r;
-    Serial.print(r);
-    Serial.print(", ");
-    }
-  Serial.println(" ");
-*/
+  /*assignButtons();
+    Serial.println("randomly pressed lift buttons:");  //ASSIGN VIRTUAL BUTTONS - simulating C20
+    for (int t = 0; t < numb; t = t + 1){
+    int r = random(1,6);
+    largeArray[t] = r;
+      Serial.print(r);
+      Serial.print(", ");
+      }
+    Serial.println(" ");
+  */
 }
 
 
 void loop() {
-SerialEvent();
+  SerialEvent();
 
-EmergencyReturn();
+  EmergencyReturn();
 
-NormalRequest();
+  NormalRequest();
 
-angle = flor * 241.47;
-  controller(angle);
-  while(error > maxStop || error < minStop){
   angle = flor * 241.47;
-  controller(angle); //CALLING MAIN PID FUNCTION
+  controller(angle);
+  while (error > maxStop || error < minStop) {
+    angle = flor * 241.47;
+    controller(angle); //CALLING MAIN PID FUNCTION
   }
 
 }  //End of loop
@@ -133,9 +133,9 @@ angle = flor * 241.47;
 void SerialEvent()
 {
   int value;
-  if(input_num < arraySize)
+  if (input_num < arraySize)
   {
-    if (Serial.available()) 
+    if (Serial.available())
     {
       value = Serial.read();
       Serial.print("value");
@@ -145,24 +145,24 @@ void SerialEvent()
       //Serial.print(value);
       //Serial.print(" RECIEVED");
       //Serial.println();
-      if(value == 6)
+      if (value == 6)
       {
         door_open();
         value = 0;
         return;
       }
-      if(value == 7)
+      if (value == 7)
       {
         hault();//EMERGENCY BRAKE
         value = 0;
         return;
       }
-      if(value > 7)
+      if (value > 7)
       {
         value = 0;
         return;
       }
-  
+
       input_array[input_num] = value;
       input_num++;
 
@@ -171,160 +171,160 @@ void SerialEvent()
 }
 
 
-void EmergencyReturn(){
+void EmergencyReturn() {
 
-//IF RECEIVED THAT ELEVATOR HAS RETURNED TO LEVEL 1:
+  //IF RECEIVED THAT ELEVATOR HAS RETURNED TO LEVEL 1:
 
-if (floorState == 0){
-  moveFloors = currentFloor - 1;   //currentFloor will be updated after the last command, thus will be the distance needed to travel to continue to desired floor.
-//  currentFloor = currentFloor + moveFloors; //New current level
-return;
+  if (floorState == 0) {
+    moveFloors = currentFloor - 1;   //currentFloor will be updated after the last command, thus will be the distance needed to travel to continue to desired floor.
+    //  currentFloor = currentFloor + moveFloors; //New current level
+    return;
   }
 }
 
 
-void NormalRequest(){
-//RECEIVED THAT ELEVATOR HAS ARRIVED AND AWAITING NEW DESTINATION:
-if (floorState == 1){
+void NormalRequest() {
+  //RECEIVED THAT ELEVATOR HAS ARRIVED AND AWAITING NEW DESTINATION:
+  if (floorState == 1) {
 
-//readInputs();
-for(int z = 0; z < arraySize; z = z + 1){
- int e = input_array[z];          
-  
-//Turning destination levels true:
-if (e==1){
-  binArray[0] = 1;
-}
-if (e==2){
-  binArray[1] = 2;
-}
-if (e==3){
-  binArray[2] = 3;
-}
-if (e==4){
-  binArray[3] = 4;
-}
-if (e==5){
-  binArray[4] = 5;
- }
- 
-}
+    //readInputs();
+    for (int z = 0; z < arraySize; z = z + 1) {
+      int e = input_array[z];
 
+      //Turning destination levels true:
+      if (e == 1) {
+        binArray[0] = 1;
+      }
+      if (e == 2) {
+        binArray[1] = 2;
+      }
+      if (e == 3) {
+        binArray[2] = 3;
+      }
+      if (e == 4) {
+        binArray[3] = 4;
+      }
+      if (e == 5) {
+        binArray[4] = 5;
+      }
 
-//readArray();
-for (int p = 0; p < arraySize; p = p + 1){
-int d = input_array[p];
-    //Serial.println("value" );
-    //Serial.println(d);
-
-//direcCalc();
- moveTest = d - currentFloor; //Up or down
-if (moveTest >= 0){
-    direc = 1;
-} else{
-    direc = -1;
-}
-
-//floorTrue();
-if (d != 0){       //if Floor is desired
-  y = (currentFloor+(1*direc))-1;
-
-//inbetweenFloors();   - will export a return
-for (int n = currentFloor; abs(n-d) > 1; n = n + 1){   //If destination is not the next floor, and a floor inbetween is also requested:
-  if (binArray[y] != 0){
-    moveFloors = binArray[y] - currentFloor;
-       Serial.print("moveFloors h" );
-       Serial.println(moveFloors);
-  
-  currentFloor = currentFloor + moveFloors;
-
-  
-//EMPTY ARRAY
-  for (int f = 0; f < arraySize; f = f + 1){
-   int g = input_array[f];
-    if (g == currentFloor){
-    input_array[f] = 0;      //Clear this number from large array
- }
-}
-binArray[y] = 0;        //Clear this floor value from repeating
-return;
- }
-}
+    }
 
 
- moveFloors = d - currentFloor;
- 
-  Serial.print("moveFloors " );
-  Serial.println(moveFloors);
-  
-  input_num = 0;
+    //readArray();
+    for (int p = 0; p < arraySize; p = p + 1) {
+      int d = input_array[p];
+      //Serial.println("value" );
+      //Serial.println(d);
 
- currentFloor = currentFloor + moveFloors;
- 
-  for (int f = 0; f < arraySize; f = f + 1){
-   int g = input_array[f];
-    if (g == currentFloor){
-    input_array[f] = 0;      //Clear this number from large array
- }
-}
-  binArray[y] = 0;
+      //direcCalc();
+      moveTest = d - currentFloor; //Up or down
+      if (moveTest >= 0) {
+        direc = 1;
+      } else {
+        direc = -1;
+      }
+
+      //floorTrue();
+      if (d != 0) {      //if Floor is desired
+        y = (currentFloor + (1 * direc)) - 1;
+
+        //inbetweenFloors();   - will export a return
+        for (int n = currentFloor; abs(n - d) > 1; n = n + 1) { //If destination is not the next floor, and a floor inbetween is also requested:
+          if (binArray[y] != 0) {
+            moveFloors = binArray[y] - currentFloor;
+            Serial.print("moveFloors h" );
+            Serial.println(moveFloors);
+
+            currentFloor = currentFloor + moveFloors;
 
 
- return;   
-} 
+            //EMPTY ARRAY
+            for (int f = 0; f < arraySize; f = f + 1) {
+              int g = input_array[f];
+              if (g == currentFloor) {
+                input_array[f] = 0;      //Clear this number from large array
+              }
+            }
+            binArray[y] = 0;        //Clear this floor value from repeating
+            return;
+          }
+        }
 
-//floorState = 2;
-   }  //End of floorState = true
+
+        moveFloors = d - currentFloor;
+
+        Serial.print("moveFloors " );
+        Serial.println(moveFloors);
+
+        input_num = 0;
+
+        currentFloor = currentFloor + moveFloors;
+
+        for (int f = 0; f < arraySize; f = f + 1) {
+          int g = input_array[f];
+          if (g == currentFloor) {
+            input_array[f] = 0;      //Clear this number from large array
+          }
+        }
+        binArray[y] = 0;
+
+
+        return;
+      }
+
+      //floorState = 2;
+    }  //End of floorState = true
   }
 }
 
 
-void door_open(){
-  
+void door_open() {
+
 }
 
 
-void hault(){
+void hault() {
 
 }
 
 //PID FUNCTION
 void controller(double input) {
   error = input - (count * ticksPerDeg);
-//  if((millis() - prevMill) >= 200){
-//    Serial.print("Error:    ");
-//    Serial.println(pError);
-   
-  if (error > maxStop || error < minStop) 
+  //  if((millis() - prevMill) >= 200){
+  //    Serial.print("Error:    ");
+  //    Serial.println(pError);
+
+  if (error > maxStop || error < minStop)
   {
     currentSample = /**/micros()/*millis()*/; //if want a sample rate lower than 1ms, change to micros()
     if (currentSample - lastSample > sampleRate) {
-    double deriv = (error - pError) / sampleRate;                   // gradient approximation, rise/run
-    double integ = (error + ((1 / 2) * (error - pError))) * sampleRate; // rectangular approximation.
-    pError = error;                                                 //for use in next calculation
-    throttle = (kp * error) + (kd * deriv) + (ki * integ);  
-    temp = throttle;
+      double deriv = (error - pError) / sampleRate;                   // gradient approximation, rise/run
+      double integ = (error + ((1 / 2) * (error - pError))) * sampleRate; // rectangular approximation.
+      pError = error;                                                 //for use in next calculation
+      throttle = (kp * error) + (kd * deriv) + (ki * integ);
+      temp = throttle;
 
-    if (throttle > 0.0) 
+      if (throttle > 0.0)
       {
         setDir('-');
         throttle *= -1;
       }
-    else 
+      else
       {
         setDir('+');
       }
-    lastSample = currentSample;
-    if(throttle > 0)
+      lastSample = currentSample;
+      if (throttle > 0)
       {
         throttle = map(throttle, 235, 67007, minPower, maxPower);
       }
-    else
+      else
         throttle = map(throttle, -235, -67007, minPower, maxPower);
       //Motor0.writeMicroseconds(throttle);
     }
   }
-  else 
+  else
   {
     Motor_stop();
     //Motor0.writeMicroseconds(throttle);
@@ -383,7 +383,7 @@ void doEncoderB() { //SETUPS the interrupts of the encoder
 void setDir(char dir) { //DIRECTION SET FUNCTION
   if (dir == '-') { //Moves in Clockwise direction
     minPower = 1400;
-    maxPower = 1000; 
+    maxPower = 1000;
   }
   else if (dir == '+') { //moves in Anti clockwise direction
     minPower = 1600;

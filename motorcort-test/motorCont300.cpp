@@ -29,25 +29,18 @@ motorCont300::motorCont300(){
 }
 
 
-bool motorCont300::move(int flr)
+bool motorCont300::move(float flr)
 {
 	
 	angle = flr * degPerF;
 	motor1.writeMicroseconds(throttle);
-	//motor1.write(throttle);
-	Serial.print("reading     ");
-	Serial.println(motor1.read());
 	switch(state)
 	{
 		case 0: //pid calc
-			//Serial.println("hello");
 			tFCalc.errorCalc(angle, encoder1.getCount(), encoder1.getTicks());
-			//Serial.println(tFCalc.getError());
 			if( tFCalc.getError() < maxStop && tFCalc.getError() > minStop)
 			{
 			state = 2;
-
-			Serial.println("stop");
 			}
 			else
 			{
@@ -60,12 +53,12 @@ bool motorCont300::move(int flr)
 			break;
 		case 2: //halt
 			halt();
-			Serial.println("halting");
 			break;
 		default: //Do Nothing
 		
 			break;
 	}
+	
 	return;
 	
 }
@@ -77,6 +70,12 @@ void motorCont300::setState(int a)
 }
 
 void motorCont300::home(){
+	noInterrupts();
+	throttle = 1400;
+	//while(limit =! true){
+	motor1.writeMicroseconds(throttle);
+	//}
+	interrupts();
 	return;
 }
 
@@ -148,4 +147,10 @@ void motorCont300::setStopRange(double mi, double ma)
 	minStop = mi;
 	maxStop = ma;
 	return;
+}
+
+
+int motorCont300::getState()
+{
+	return state;
 }

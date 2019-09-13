@@ -40,9 +40,10 @@ class motorCont300{
 	//construct
 	motorCont300();
 	//methods
-	bool move(int flr);
+	bool move(float flr);
 	
 	void setState(int a);
+	int getState();
 	void setPulley(double p);
 	void setStopRange(double mi, double ma);
 	void setDir(char dir);
