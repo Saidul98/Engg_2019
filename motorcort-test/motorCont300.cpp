@@ -18,9 +18,9 @@ motorCont300::motorCont300(){
 	
 	
 	//////////////////////////////////////////////////////////////////////	Optional - Can be set by user	//
-	encoder1 = encodeMot300(2, 3, 537.6); //	(intrupt pins, ppr)
+	encoder1 = encodeMot300(2, 3, 537.6); //	(intrupt pins, ppr) //1680 - 537.6
 	tFCalc = pidFunc300(4.40, 0.05, 2.5); //	(kp, kd, ki)
-	setPulley(0.070); //Set Pulley Circumfrence in mm
+	setPulley(0.045); //Set Pulley Circumfrence in mm   //38 for 11 - //70 for 8
 	setStopRange((-5.0), 5.0); //set error bars for position control
 	
 	
@@ -129,12 +129,12 @@ void motorCont300::setDir(char dir)
 {
 	if (dir == '-')//Moves in Clockwise direction
 	{
-		minPower = 1400;
+		minPower = 1300;
 		maxPower = 1000; 
 	}
 	else if (dir == '+')  //moves in Anti clockwise direction
 	{
-		minPower = 1600;
+		minPower = 1700;
 		maxPower = 2000;
 		}
   else { //motor off.
