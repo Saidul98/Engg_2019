@@ -14,6 +14,8 @@ class motorCont300{
 	int pin;
 	int state;
 	
+	bool no_jump;
+	bool jumping;
 	
 	double minPower;
 	double maxPower;
@@ -24,7 +26,11 @@ class motorCont300{
 	//this prevents the motor jittering about one point
 	
 	pidFunc300 tFCalc;
+	double pthrottle;
+	double destthrottle;
 	
+	long prevMillis;
+	long interval;	
 
 	
 	 
@@ -33,6 +39,8 @@ class motorCont300{
 	
 	
 	public:
+	
+	
 	Servo motor1;	
 	double angle;
 	double throttle;
@@ -41,6 +49,10 @@ class motorCont300{
 	motorCont300();
 	//methods
 	bool move(float flr);
+	
+	void jumpNegat();
+	
+	void jumpcatch();
 	
 	bool motorMoving();
 	void setState(int a);

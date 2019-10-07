@@ -16,6 +16,8 @@ motorCont300::motorCont300(){
 	state = 1;
 	angle = 0;
 	
+	prevMillis = 0;
+	interval = 250;
 	
 	//////////////////////////////////////////////////////////////////////	Optional - Can be set by user	//
 	encoder1 = encodeMot300(2, 3, 537.6); //	(intrupt pins, ppr) //1680 - 537.6
@@ -62,6 +64,46 @@ bool motorCont300::move(float flr)
 	return;
 	
 }
+//remap throttle to stop jump from 0-100
+//slowly map it up to 100
+void motorCont300::jumpNegat()
+{
+	long = currentMillis = millis();
+	double diff = abs(pthrottle - throttle)
+	if(diff >= 50)
+	{
+		if(currentMillis - previousMillis >= interval)
+		{
+			if(no_jump)
+			{
+				if(throttle > pthrottle)
+					throttle = pthrottle + 50;
+				else if(throttle < pthrottle)
+				{
+					throttle = pthrottle - 50;
+				}
+				pthrottle = throttle;
+			}
+		}
+	}
+}
+
+//check if throttle is trying to go from 0-100
+//stop throttle checking once done mapping.
+void motorCont300::jumpcatch()
+{
+	long = currentMillis = millis();
+	if(currentMillis - previousMillis >= interval)
+	{
+		if(no_jump)
+		{
+			if(abs(throttle - pthrottle) >= 120)
+			{
+				
+			}
+		}
+	}
+}
 
 bool motorCont300::motorMoving()
 {
@@ -102,6 +144,7 @@ void motorCont300::drive()
 {
 	pidC(); //Do Math on throttle from PID
 	mapThrottle();// Set the direction of the motor and map the throttle to be within the min and max.
+	jumpNegat();
 	return;
 }
 
