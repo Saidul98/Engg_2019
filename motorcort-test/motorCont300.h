@@ -6,6 +6,7 @@
 #include <Servo.h>
 #include "pidFunc300.h"
 #include "encodeMot300.h"
+#include "LimitSwitch.h"
 
 class motorCont300{
 	
@@ -13,10 +14,10 @@ class motorCont300{
 	private:
 	int pin;
 	int state;
-	
+	LimitSwitch lowLimit;
 	bool no_jump;
 	bool jumping;
-	
+
 	double minPower;
 	double maxPower;
 	
@@ -31,9 +32,11 @@ class motorCont300{
 	
 	long prevMillis;
 	long interval;	
-
 	
-	 
+  bool bHome;
+	
+	 int tcount;
+   double pMaxPow;
 	  
 	
 	
@@ -65,8 +68,10 @@ class motorCont300{
 	void mapThrottle();
 	void halt();
 	void pidC();
-	void home();
-	
+	void gohome();
+
+  bool checkLowLim();
+  void attach();
 };
 
 #endif	/* motorCont300.h */
